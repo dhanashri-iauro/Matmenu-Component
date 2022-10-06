@@ -1,0 +1,55 @@
+<div>
+  <ul id="nav_ul">
+    <li class="parent menu">
+      <a>Menu</a>
+      <ng-container
+        *ngTemplateOutlet="
+          recursiveListTmpl;
+          context: { list: menuData, temp: '' }
+        "
+      ></ng-container>
+    </li>
+  </ul>
+</div>
+<ng-template #recursiveListTmpl let-temp="temp" let-list="list">
+  <ul class="child">
+    <li
+      style="padding: 0px; width: 100%"
+      class="parent"
+      *ngFor="let matdatalist of list"
+    >
+      <ng-container *ngIf="!matdatalist.hasOwnProperty('disabled')">
+        <div class="enabled">
+          <a (click)="showMainList($event, matdatalist, temp)" onClick="">{{
+            matdatalist.name
+          }}</a>
+          <span style="text-align: right; font-size: small">
+            <ng-container *ngIf="matdatalist.hasOwnProperty('children')">
+              <svg class="sicon" viewbox="0 0 5 10">
+                <polygon points="0,0 5,5 0,10"></polygon>
+              </svg>
+            </ng-container>
+          </span>
+        </div>
+
+        <ng-container *ngIf="matdatalist.children">
+          <ng-container
+            *ngTemplateOutlet="
+              recursiveListTmpl;
+              context: {
+                list: matdatalist.children,
+                temp:
+                  temp === '' ? matdatalist.name : temp + '.' + matdatalist.name
+              }
+            "
+          ></ng-container>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="matdatalist.hasOwnProperty('disabled')">
+        <div class="disabled">
+          <a>{{ matdatalist.name }}</a>
+        </div>
+      </ng-container>
+    </li>
+  </ul>
+</ng-template>
